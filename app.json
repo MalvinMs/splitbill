@@ -6,6 +6,14 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "scheme": "splitbill",
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "14c95f8a-27e0-4c19-8d74-1f03a7457e99"
+      }
+    },
+    "owner": "malvinms"
   }
 }
