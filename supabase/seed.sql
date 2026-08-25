@@ -1,0 +1,3 @@
+-- SplitBill has no safe static seed rows because all user and group data is
+-- owned by authenticated users. Default expense categories are enforced by
+-- the expenses.category constraint in the initial migration.

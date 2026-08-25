@@ -1,0 +1,12 @@
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useAuth } from '../auth/AuthProvider';
+import type { GroupStackParamList } from '../navigation/types';
+import { getGroup, getGroupMembers, removeMember } from '../features/groups/api';
+import { Avatar, OutlineButton, PageTitle, Paper, Screen, StatusMark } from '../ui/Primitives';
+import { useAppTheme, typography } from '../ui/theme';
+
+type Props = NativeStackScreenProps<GroupStackParamList, 'Members'>;
+export function MembersScreen({ route }: Props) { const theme = useAppTheme(); const { session } = useAuth(); const client = useQueryClient(); const group = useQuery({ queryKey: ['groups', route.params.groupId], queryFn: () => getGroup(route.params.groupId) }); const members = useQuery({ queryKey: ['groups', route.params.groupId, 'members'], queryFn: () => getGroupMembers(route.params.groupId) }); const remove = useMutation({ mutationFn: removeMember, onSuccess: () => client.invalidateQueries({ queryKey: ['groups', route.params.groupId, 'members'] }) }); const isOwner = group.data?.created_by === session?.user.id; return <Screen scroll contentStyle={styles.container}><PageTitle subtitle="Everyone who can see and add to this group.">Members</PageTitle>{members.data?.map((member) => <Paper key={member.id} style={styles.row}><Avatar label={member.profiles?.full_name || member.profiles?.username || '?'} /><View style={styles.copy}><Text style={[typography.title, { color: theme.colors.ink }]}>{member.profiles?.full_name || 'Unnamed member'}</Text><Text style={[typography.body, { color: theme.colors.inkMuted, marginTop: 2 }]}>{member.profiles?.username ? `@${member.profiles.username}` : 'No username'}</Text></View>{member.role === 'owner' ? <StatusMark tone="gold">OWNER</StatusMark> : isOwner ? <OutlineButton destructive onPress={() => Alert.alert('Remove member?', 'They can rejoin with a new invite.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Remove', style: 'destructive', onPress: () => remove.mutate(member.id) }])}>Remove</OutlineButton> : null}</Paper>)}</Screen>; }
+const styles = StyleSheet.create({ container: { paddingTop: 18 }, row: { alignItems: 'center', flexDirection: 'row', marginBottom: 10, padding: 13 }, copy: { flex: 1, marginLeft: 11 } });

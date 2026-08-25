@@ -1,0 +1,25 @@
+import type { ReactNode } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { useAppTheme, type AppTheme, typography } from './theme';
+
+export function Screen({ children, scroll = false, contentStyle }: { children: ReactNode; scroll?: boolean; contentStyle?: object }) {
+  const theme = useAppTheme();
+  const content = scroll ? <ScrollView contentContainerStyle={[styles.scroll, contentStyle]} keyboardShouldPersistTaps="handled">{children}</ScrollView> : <View style={[styles.fill, contentStyle]}>{children}</View>;
+  return <SafeAreaView edges={['top', 'bottom']} style={[styles.fill, { backgroundColor: theme.colors.canvas }]}><StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />{content}</SafeAreaView>;
+}
+
+export function SectionLabel({ children, color }: { children: ReactNode; color?: string }) { const theme = useAppTheme(); return <Text style={[typography.label, { color: color ?? theme.colors.inkMuted, marginBottom: 9 }]}>{children}</Text>; }
+export function PageTitle({ children, subtitle }: { children: ReactNode; subtitle?: ReactNode }) { const theme = useAppTheme(); return <View style={styles.pageTitle}><Text style={[typography.display, { color: theme.colors.ink }]}>{children}</Text>{subtitle && <Text style={[typography.body, { color: theme.colors.inkMuted, marginTop: 6 }]}>{subtitle}</Text>}</View>; }
+export function Rule() { const theme = useAppTheme(); return <View style={{ backgroundColor: theme.colors.line, height: StyleSheet.hairlineWidth, width: '100%' }} />; }
+export function Paper({ children, style }: { children: ReactNode; style?: object }) { const theme = useAppTheme(); return <View style={[styles.paper, { backgroundColor: theme.colors.paper, borderColor: theme.colors.line }, style]}>{children}</View>; }
+export function PrimaryButton({ children, onPress, disabled = false }: { children: ReactNode; onPress: () => void; disabled?: boolean }) { const theme = useAppTheme(); return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress} style={({ pressed }) => [styles.primary, { backgroundColor: theme.colors.primary }, (pressed || disabled) && { opacity: 0.68 }]}><Text style={[styles.primaryText, { color: theme.colors.onPrimary }]}>{children}</Text></Pressable>; }
+export function OutlineButton({ children, onPress, destructive = false }: { children: ReactNode; onPress: () => void; destructive?: boolean }) { const theme = useAppTheme(); const color = destructive ? theme.colors.error : theme.colors.primary; return <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.outline, { borderColor: color }, pressed && { opacity: 0.65 }]}><Text style={[styles.outlineText, { color }]}>{children}</Text></Pressable>; }
+export function Busy({ label = 'Loading' }: { label?: string }) { const theme = useAppTheme(); return <View style={styles.busy}><ActivityIndicator color={theme.colors.primary} /><Text style={[typography.body, { color: theme.colors.inkMuted, marginTop: 10 }]}>{label}</Text></View>; }
+export function Avatar({ label, large = false }: { label: string; large?: boolean }) { const theme = useAppTheme(); return <View style={[styles.avatar, { backgroundColor: theme.colors.primary }, large && styles.avatarLarge]}><Text style={[styles.avatarText, { color: theme.colors.onPrimary }, large && styles.avatarTextLarge]}>{label.slice(0, 1).toUpperCase()}</Text></View>; }
+export function StatusMark({ children, tone = 'gold' }: { children: ReactNode; tone?: 'gold' | 'coral' | 'green' }) { const theme = useAppTheme(); const colors = tone === 'coral' ? [theme.colors.accentSoft, theme.colors.accent] : tone === 'green' ? [theme.colors.paperMuted, theme.colors.success] : [theme.colors.goldSoft, theme.colors.gold]; return <View style={[styles.status, { backgroundColor: colors[0] }]}><Text style={[typography.label, { color: colors[1], fontSize: 10, letterSpacing: 0.8 }]}>{children}</Text></View>; }
+
+const styles = StyleSheet.create({ fill: { flex: 1 }, scroll: { padding: 20, paddingBottom: 36 }, pageTitle: { marginBottom: 26, paddingTop: 8 }, paper: { borderRadius: 16, borderWidth: 1, padding: 18 }, primary: { alignItems: 'center', borderRadius: 12, minHeight: 52, justifyContent: 'center', paddingHorizontal: 18, paddingVertical: 14 }, primaryText: { fontSize: 15, fontWeight: '800' }, outline: { alignItems: 'center', borderRadius: 12, borderWidth: 1, minHeight: 52, justifyContent: 'center', paddingHorizontal: 18, paddingVertical: 14 }, outlineText: { fontSize: 15, fontWeight: '800' }, busy: { alignItems: 'center', flex: 1, justifyContent: 'center' }, avatar: { alignItems: 'center', borderRadius: 19, height: 38, justifyContent: 'center', width: 38 }, avatarLarge: { borderRadius: 34, height: 68, width: 68 }, avatarText: { fontSize: 16, fontWeight: '800' }, avatarTextLarge: { fontSize: 28 }, status: { alignSelf: 'flex-start', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5 } });
+
+export type { AppTheme };

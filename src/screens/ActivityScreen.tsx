@@ -1,0 +1,6 @@
+import { StyleSheet, Text, View } from 'react-native';
+import { Paper, PageTitle, Screen, SectionLabel } from '../ui/Primitives';
+import { useAppTheme, typography } from '../ui/theme';
+
+export function ActivityScreen() { const theme = useAppTheme(); return <Screen scroll contentStyle={styles.container}><PageTitle subtitle="A quiet history of what changed.">Activity</PageTitle><Paper><SectionLabel>COMING INTO FOCUS</SectionLabel><Text style={[typography.headline, { color: theme.colors.ink }]}>Your group stories will live here.</Text><Text style={[typography.body, { color: theme.colors.inkMuted, marginTop: 8 }]}>New expenses, members, edits, and settlements will appear as a chronological record.</Text><View style={[styles.timeline, { borderColor: theme.colors.line }]}><View style={[styles.dot, { backgroundColor: theme.colors.primary }]} /><View><Text style={[typography.label, { color: theme.colors.primary, fontSize: 9 }]}>READY FOR YOUR FIRST ENTRY</Text><Text style={[typography.body, { color: theme.colors.inkMuted, marginTop: 4 }]}>Add an expense inside a group to begin.</Text></View></View></Paper></Screen>; }
+const styles = StyleSheet.create({ container: { paddingTop: 18 }, timeline: { alignItems: 'center', borderTopWidth: 1, flexDirection: 'row', gap: 12, marginTop: 22, paddingTop: 18 }, dot: { borderRadius: 6, height: 12, width: 12 } });
