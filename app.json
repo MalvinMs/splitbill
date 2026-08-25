@@ -17,6 +17,9 @@
     "owner": "malvinms",
     "android": {
       "package": "com.malvinms.splitbill"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
