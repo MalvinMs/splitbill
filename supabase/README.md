@@ -17,4 +17,6 @@ In Supabase Dashboard → Authentication → URL Configuration, configure the mo
 
 If the confirmation or reset email templates were customized, use `{{ .ConfirmationURL }}` for the link, or `{{ .RedirectTo }}` when the template constructs its own redirect. Do not use `{{ .SiteURL }}` for these mobile links.
 
+The app deliberately avoids using a local web origin for auth emails. If a public web build is added later, set `EXPO_PUBLIC_AUTH_WEB_REDIRECT_URL` to its HTTPS callback and add that exact URL to the Supabase allow list.
+
 Mobile callback links must be opened from the Android device/emulator email client. A desktop browser cannot open the installed Android app's `splitbill://` scheme.

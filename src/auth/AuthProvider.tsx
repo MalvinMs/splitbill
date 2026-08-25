@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
+import { Platform } from 'react-native';
 import type { Session } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
@@ -16,6 +17,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const NATIVE_AUTH_REDIRECT_URL = 'splitbill://auth/callback';
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
@@ -23,6 +25,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
 
   function getAuthRedirectUrl() {
+    // A web dev server resolves Linking.createURL() to localhost. That URL
+    // is not useful from a real email client, so web auth defaults to the
+    // installed app's deep link unless a public web callback is configured.
+    if (Platform.OS === 'web') {
+      return process.env.EXPO_PUBLIC_AUTH_WEB_REDIRECT_URL?.trim() || NATIVE_AUTH_REDIRECT_URL;
+    }
+
     // Expo resolves this to an exp:// URL in Expo Go and splitbill:// in a
     // standalone/development build, so the same code works in both modes.
     return Linking.createURL('auth/callback');
